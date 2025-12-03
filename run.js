@@ -6,7 +6,7 @@ let sendNotification = () => {};
 let removeMnemonicCallback = () => false;
 
 const PI_API_SERVERS = [
-    'http://4.194.35.14:31401',
+    'http://localhost:31401',
 ];
 
 const PI_NETWORK_PASSPHRASE = 'Pi Network';
