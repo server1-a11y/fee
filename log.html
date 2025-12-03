@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --primary-text-color: #c9d1d9;
+            --secondary-text-color: #8b949e;
+            --accent-color: #58a6ff;
+            --warning-color: #e3b341;
+            --error-color: #f85149;
+            --success-color: #3fb950;
+            --container-bg-color: #161b22;
+            --border-color: #30363d;
+            --log-bg-color: #010409;
+            --header-glow: 0 0 15px rgba(88, 166, 255, 0.8);
+            --log-shadow: 0 0 8px rgba(88, 166, 255, 0.2);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--primary-text-color);
+            font-family: 'Roboto Mono', 'Consolas', 'Menlo', monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            background-image: radial-gradient(circle at center, var(--bg-color) 0%, #06090f 100%);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            background-color: var(--container-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(88, 166, 255, 0.3), 0 4px 20px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            /* Hanya sebagai wrapper untuk efek typing */
+            display: none; 
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Styling untuk Teks Mengetik */
+        #typing-text {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-color);
+            text-shadow: var(--header-glow);
+            font-size: 2.2em; /* Ukuran yang besar */
+            display: block; 
+            text-align: center;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            letter-spacing: 3px;
+            border-bottom: 2px solid var(--accent-color);
+            font-weight: 700;
+        }
+        
+        /* Efek Cursor Berkedip */
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em; 
+            background-color: var(--accent-color);
+            margin-left: 5px;
+            animation: blink 0.75s step-end infinite;
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+        
+        @keyframes blink {
+            from, to { background-color: transparent; }
+            50% { background-color: var(--accent-color); }
+        }
+
+        #log-output {
+            background-color: var(--log-bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            height: 60vh;
+            overflow-y: auto;
+            border: 1px solid var(--accent-color);
+            box-shadow: var(--log-shadow);
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            padding: 3px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1); 
+            transition: all 0.1s ease-out;
+        }
+        
+        .log-entry:hover {
+            background-color: rgba(88, 166, 255, 0.05);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-status-success { color: var(--success-color); }
+        .log-status-error { color: var(--error-color); }
+        .log-status-info { color: var(--accent-color); }
+        .log-status-warning { color: var(--warning-color); }
+        
+        .log-timestamp {
+            color: var(--secondary-text-color);
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--log-bg-color); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #79c0ff; box-shadow: 0 0 5px var(--accent-color); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1></h1> 
+        <span id="typing-text"></span>
+        <pre id="log-output"></pre>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const MAX_LOG_LINES = 50;
+        const socket = io();
+        const logOutput = document.getElementById('log-output');
+
+        // NEW: Konstanta untuk efek mengetik
+        const HEADER_TEXT = "⚡Fee Manager⚡";
+        const TYPING_SPEED = 50; // 50 milidetik per karakter
+        const typingElement = document.getElementById('typing-text');
+        
+        // NEW: Fungsi untuk mengetik teks
+        function typeWriter() {
+            let i = 0;
+            // Inisialisasi cursor
+            typingElement.innerHTML = `<span class="cursor"></span>`; 
+
+            function type() {
+                if (i < HEADER_TEXT.length) {
+                    // Tampilkan teks + cursor
+                    typingElement.innerHTML = HEADER_TEXT.substring(0, i + 1) + `<span class="cursor"></span>`;
+                    i++;
+                    setTimeout(type, TYPING_SPEED);
+                } else {
+                    // Setelah selesai, pastikan teks penuh dan cursor tetap ada
+                    typingElement.innerHTML = HEADER_TEXT + `<span class="cursor"></span>`;
+                }
+            }
+            type();
+        }
+
+        function addLogMessage(message) {
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            
+            const timestamp = new Date().toLocaleTimeString('id-ID', { hour12: false });
+            let statusClass = '';
+            
+            if (message.includes('Error') || message.includes('❌') || message.includes('Gagal') || message.includes('KONEKSI TERPUTUS')) {
+                statusClass = 'log-status-error';
+            } else if (message.includes('✅') || message.includes('Berhasil') || message.includes('Sukses')) {
+                statusClass = 'log-status-success';
+            } else if (message.includes('🟡') || message.includes('Menghubungkan') || message.includes('Connecting')) {
+                 statusClass = 'log-status-warning';
+            } else {
+                statusClass = 'log-status-info';
+            }
+
+            const timestampSpan = document.createElement('span');
+            timestampSpan.className = 'log-timestamp';
+            timestampSpan.textContent = `[${timestamp}]`;
+            
+            const messageSpan = document.createElement('span');
+            messageSpan.textContent = ` ${message}`;
+            messageSpan.className = statusClass;
+            
+            logEntry.appendChild(timestampSpan);
+            logEntry.appendChild(messageSpan);
+
+            logOutput.appendChild(logEntry);
+
+            while (logOutput.childElementCount > MAX_LOG_LINES) {
+                logOutput.removeChild(logOutput.firstChild);
+            }
+
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+
+        // Jalankan fungsi mengetik setelah DOM siap
+        document.addEventListener('DOMContentLoaded', () => {
+             // Hapus konten awal
+            logOutput.innerHTML = ''; 
+            
+            // Jalankan efek mengetik
+            typeWriter(); 
+            
+            // Tambahkan pesan status koneksi awal
+            addLogMessage('ℹ️ Client Initialized.');
+        });
+
+
+        socket.on('connect', () => {
+            console.log('Terhubung ke server.');
+            addLogMessage('✅ Koneksi ke server berhasil', 'success');
+        });
+        
+        socket.on('log', (message) => {
+            addLogMessage(message);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Koneksi ke server terputus.');
+            addLogMessage('❌ KONEKSI TERPUTUS. Mencoba menghubungkan kembali...', 'error');
+        });
+
+    </script>
+</body>
+</html>
