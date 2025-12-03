@@ -186,7 +186,7 @@ function runBotCycle() {
         .finally(() => {
             if (!botState.isRunning) return;
             // Jeda singkat antar wallet
-            botState.timeoutId = setTimeout(() => runBotCycle(), 70); 
+            botState.timeoutId = setTimeout(() => runBotCycle(), 100); 
         });
 }
 
