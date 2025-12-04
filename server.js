@@ -12,9 +12,9 @@ const fs = require('fs');
 const piBot = require('./run.js'); // Asumsi file ini ada dan diekspor
 
 // --- KONFIGURASI PENTING ---
-const TELEGRAM_TOKEN = '8320450900:AAEPRsqIrK3bMu19wvBvSyAepwihn7AA2G8';
-const WEBHOOK_URL = 'https://client1.pileakers.net';
-const PORT = process.env.PORT || 1000;
+const TELEGRAM_TOKEN = '8465042362:AAFPtc7kgCVVYi1M_TqSqUOZzI3w3aVMLD8';
+const WEBHOOK_URL = 'https://fee.zendshost.id';
+const PORT = process.env.PORT || 1001;
 // ----------------------------
 
 const CONFIG_FILE = './config.json';
