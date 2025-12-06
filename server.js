@@ -13,7 +13,7 @@ const piBot = require('./run.js'); // Asumsi file ini ada dan diekspor
 
 // --- KONFIGURASI PENTING ---
 const TELEGRAM_TOKEN = '8240173605:AAGO8meOhh0faLeCjIXKA7iVs_NnwalHdjI';
-const WEBHOOK_URL = 'https://server.panelbot.cloud';
+const WEBHOOK_URL = 'https://server2.pileakers.net';
 const PORT = process.env.PORT || 3000;
 // ----------------------------
 
