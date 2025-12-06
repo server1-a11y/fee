@@ -12,7 +12,7 @@ const fs = require('fs');
 const piBot = require('./run.js'); // Asumsi file ini ada dan diekspor
 
 // --- KONFIGURASI PENTING ---
-const TELEGRAM_TOKEN = '8320450900:AAEPRsqIrK3bMu19wvBvSyAepwihn7AA2G8';
+const TELEGRAM_TOKEN = '832045090';
 const WEBHOOK_URL = 'https://server2.pileakers.net';
 const PORT = process.env.PORT || 3000;
 // ----------------------------
