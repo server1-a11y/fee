@@ -29,7 +29,7 @@ const app = express();
 // --- Rate Limit Telegram ---
 let notificationQueue = [];
 let isProcessingQueue = false;
-const TELEGRAM_DELAY_MS = 2000;
+const TELEGRAM_DELAY_MS = 1000;
 
 // --- Socket.IO Logging ---
 const server = http.createServer(app);
